@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="market_prices_title">Market Prices - Market-Connect Chatbot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="translations.js"></script>
+  <script src="lang.js"></script>
+  <script>
+    async function fetchMandiPrices() {
+      try {
+        const response = await fetch('/mandi-prices');
+        const prices = await response.json();
+        const pricesList = document.getElementById('prices-list');
+        pricesList.innerHTML = '';
+        for (const [product, data] of Object.entries(prices)) {
+          const row = document.createElement('tr');
+
+          const productCell = document.createElement('td');
+          productCell.textContent = product;
+          row.appendChild(productCell);
+
+          const priceCell = document.createElement('td');
+          priceCell.textContent = '₹' + data.price;
+          row.appendChild(priceCell);
+
+          const stockCell = document.createElement('td');
+          if (data.stock_quantity > 0) {
+            stockCell.textContent = data.stock_quantity;
+          } else {
+            stockCell.textContent = 'Out of Stock';
+            stockCell.style.color = 'red';
+          }
+          row.appendChild(stockCell);
+
+          const actionsCell = document.createElement('td');
+
+          // Update button
+          const updateBtn = document.createElement('button');
+          updateBtn.textContent = 'Update';
+          updateBtn.onclick = () => openUpdateModal(data.id, product, data.price, data.stock_quantity);
+          actionsCell.appendChild(updateBtn);
+
+          // Delete button
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.onclick = () => deleteProduct(data.id);
+          actionsCell.appendChild(deleteBtn);
+
+          row.appendChild(actionsCell);
+
+          pricesList.appendChild(row);
+        }
+      } catch (error) {
+        console.error('Error fetching mandi prices:', error);
+      }
+    }
+
+    async function addProduct() {
+      const name = document.getElementById('new-product-name').value;
+      const price = parseFloat(document.getElementById('new-product-price').value);
+      const stock = parseInt(document.getElementById('new-product-stock').value);
+
+      if (!name || isNaN(price) || isNaN(stock)) {
+        alert('Please enter valid product details.');
+        return;
+      }
+
+      const response = await fetch('/mandi-prices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price, stock_quantity: stock })
+      });
+
+      if (response.ok) {
+        alert('Product added successfully');
+        fetchMandiPrices();
+        document.getElementById('new-product-name').value = '';
+        document.getElementById('new-product-price').value = '';
+        document.getElementById('new-product-stock').value = '';
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.error);
+      }
+    }
+
+    async function deleteProduct(productId) {
+      const response = await fetch('/mandi-prices/' + productId, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        alert('Product deleted successfully');
+        fetchMandiPrices();
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.error);
+      }
+    }
+
+    let currentUpdateProductId = null;
+
+    function openUpdateModal(productId, productName, currentPrice, currentStock) {
+      currentUpdateProductId = productId;
+      document.getElementById('update-product-name').textContent = productName;
+      document.getElementById('update-product-price').value = currentPrice;
+      document.getElementById('update-product-stock').value = currentStock;
+      document.getElementById('update-modal').style.display = 'block';
+    }
+
+    async function updateProduct() {
+      const newPrice = parseFloat(document.getElementById('update-product-price').value);
+      const newStock = parseInt(document.getElementById('update-product-stock').value);
+
+      if (isNaN(newPrice) || isNaN(newStock)) {
+        alert('Please enter valid price and stock.');
+        return;
+      }
+
+      const response = await fetch('/mandi-prices/' + currentUpdateProductId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ price: newPrice, stock_quantity: newStock })
+      });
+
+      if (response.ok) {
+        alert('Product updated successfully');
+        fetchMandiPrices();
+        closeUpdateModal();
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.error);
+      }
+    }
+
+    function closeUpdateModal() {
+      document.getElementById('update-modal').style.display = 'none';
+    }
+
+    window.onload = () => {
+      fetchMandiPrices();
+    };
+  </script>
+  <style>
+    #update-modal {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 30%;
+      width: 40%;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      z-index: 1000;
+    }
+    #update-modal input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    #update-modal button {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="home.html" data-i18n="nav_home">Home</a> |
+    <a href="market-prices.html" data-i18n="nav_market_prices">Market Prices</a> |
+    <a href="find-buyers.html" data-i18n="nav_find_buyers">Find Buyers</a> |
+    <a href="how-it-works.html" data-i18n="nav_how_it_works">How It Works</a> |
+    <a href="language-selector.html" data-i18n="nav_language_selector">Language Selector</a> |
+    <a href="download-app.html" data-i18n="nav_download_app">Download App</a> |
+    <a href="about-us.html" data-i18n="nav_about_us">About Us</a> |
+    <a href="contact.html" data-i18n="nav_contact">Contact</a> |
+    <a href="privacy-policy.html" data-i18n="nav_privacy_policy">Privacy Policy</a>
+  </nav>
+
+  <header class="hero">
+    <h1 data-i18n="current_market_prices_heading">Current Market Prices</h1>
+    <p data-i18n="market_prices_subheading">Updated dynamically from the mandi price database.</p>
+  </header>
+
+  <section class="add-product">
+    <h2>Add New Product</h2>
+    <input type="text" id="new-product-name" placeholder="Product Name" />
+    <input type="number" id="new-product-price" placeholder="Price (₹)" />
+    <input type="number" id="new-product-stock" placeholder="Stock Quantity" />
+    <button onclick="addProduct()">Add Product</button>
+  </section>
+
+  <section class="prices-list">
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="table_product">Product</th>
+          <th data-i18n="table_price">Price (₹)</th>
+          <th>Stock Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="prices-list">
+        <!-- Dynamic content will be inserted here -->
+      </tbody>
+    </table>
+  </section>
+
+  <div id="update-modal">
+    <h3>Update Product: <span id="update-product-name"></span></h3>
+    <input type="number" id="update-product-price" placeholder="Price (₹)" />
+    <input type="number" id="update-product-stock" placeholder="Stock Quantity" />
+    <button onclick="updateProduct()">Save</button>
+    <button onclick="closeUpdateModal()">Cancel</button>
+  </div>
+
+  <footer>
+    <nav>
+      <a href="about-us.html" data-i18n="nav_about_us">About Us</a> | 
+      <a href="contact.html" data-i18n="nav_contact">Contact</a> | 
+      <a href="privacy-policy.html" data-i18n="nav_privacy_policy">Privacy Policy</a>
+    </nav>
+  </footer>
+</body>
+</html>

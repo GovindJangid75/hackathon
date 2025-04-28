@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="home_title">Market-Connect Chatbot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="translations.js"></script>
+  <script src="lang.js"></script>
+  <style>
+    /* Chatbot Styles */
+    .chat-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #4285F4;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+    }
+    
+    .chat-icon svg {
+        width: 30px;
+        height: 30px;
+        fill: white;
+    }
+    
+    .chat-container {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 350px;
+        height: 500px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 9998;
+    }
+    
+    .chat-header {
+        background-color: #4285F4;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        max-width: 80%;
+        padding: 10px;
+        border-radius: 15px;
+    }
+    
+    .user-message {
+        background-color: #E3F2FD;
+        margin-left: auto;
+        border-bottom-right-radius: 5px;
+    }
+    
+    .bot-message {
+        background-color: #F5F5F5;
+        margin-right: auto;
+        border-bottom-left-radius: 5px;
+    }
+    
+    .chat-input-container {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .chat-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 20px;
+        outline: none;
+    }
+    
+    .send-btn {
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-left: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .typing-indicator {
+        display: none;
+        padding: 10px;
+        margin-bottom: 15px;
+        font-style: italic;
+        color: #888;
+    }
+    
+    @media (max-width: 480px) {
+        .chat-container {
+            width: 90%;
+            height: 70%;
+            bottom: 80px;
+            right: 5%;
+        }
+    }
+  </style>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="home.html" data-i18n="nav_home">Home</a> |
+    <a href="market-prices.html" data-i18n="nav_market_prices">Market Prices</a> |
+    <a href="find-buyers.html" data-i18n="nav_find_buyers">Find Buyers</a> |
+    <a href="how-it-works.html" data-i18n="nav_how_it_works">How It Works</a> |
+    <a href="language-selector.html" data-i18n="nav_language_selector">Language Selector</a> |
+    <a href="download-app.html" data-i18n="nav_download_app">Download App</a> |
+    <a href="about-us.html" data-i18n="nav_about_us">About Us</a> |
+    <a href="contact.html" data-i18n="nav_contact">Contact</a> |
+    <a href="privacy-policy.html" data-i18n="nav_privacy_policy">Privacy Policy</a>
+  </nav>
+
+  <header class="hero">
+    <h1 data-i18n="connect_markets">Connect to Markets Easily</h1>
+    <p data-i18n="gateway_info">Your gateway to real-time local market prices and buyers.</p>
+    <a href="https://wa.me/+14155238886" class="btn btn-primary" target="_blank" rel="noopener" data-i18n="chat_now">Chat Now on WhatsApp</a>
+  </header>
+
+  <!-- Removed language selector section as language selection is handled in language-selector.html -->
+
+  <section class="price-ticker">
+    <div class="ticker">
+      <span data-i18n="price_wheat">Wheat: ₹2000/Qtl</span>
+      <span data-i18n="price_rice">Rice: ₹2800/Qtl</span>
+      <span data-i18n="price_vegetables">Vegetables: ₹1500/Qtl</span>
+      <span data-i18n="price_handicrafts">Handicrafts: ₹500/item</span>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2 data-i18n="how_it_works_heading">How it Works</h2>
+    <div class="steps">
+      <div class="step">
+        <img src="https://www.shutterstock.com/shutterstock/photos/2447103519/display_1500/stock-vector-indian-farmer-showing-smartphone-technology-concept-2447103519.jpg"  />
+        <p data-i18n="upload_product">Upload or describe your product</p>
+      </div>
+      <div class="step">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-HymNve0A1Mk9mh3Og5WARhgSCpBwCCc1oQ&s" />
+        <p data-i18n="get_price_ranges">Get price ranges & demand trends</p>
+      </div>
+      <div class="step">
+        <img src="https://www.shutterstock.com/image-vector/modern-agriculture-technology-good-harvest-260nw-2208805181.jpg" alt="Find Buyer Icon" />
+        <p data-i18n="find_local_buyers">Find local buyers or co-ops</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <h2 data-i18n="testimonials_heading">What Our Users Say</h2>
+    <blockquote data-i18n="testimonial_1">"This chatbot helped me find buyers quickly and get fair prices!" - Farmer A</blockquote>
+    <blockquote data-i18n="testimonial_2">"Easy to use and very informative." - Artisan B</blockquote>
+  </section>
+
+  <footer>
+    <nav>
+      <a href="about-us.html" data-i18n="nav_about_us">About Us</a> | 
+      <a href="contact.html" data-i18n="nav_contact">Contact</a> | 
+      <a href="privacy-policy.html" data-i18n="nav_privacy_policy">Privacy Policy</a>
+    </nav>
+  </footer>
+  
+  <!-- Gemini Chatbot UI Elements -->
+  <div class="chat-icon" id="chatIcon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+    </svg>
+  </div>
+  
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+        <span data-i18n="market_assistant">Market-Connect Assistant</span>
+        <button class="close-btn" id="closeBtn">&times;</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot-message">
+            <span data-i18n="bot_welcome">Hello! I'm your Market-Connect assistant powered by AI. How can I help you with market prices or finding buyers today?</span>
+        </div>
+        <div class="typing-indicator" id="typingIndicator">
+            <span data-i18n="bot_thinking">AI is thinking...</span>
+        </div>
+    </div>
+    <div class="chat-input-container">
+        <input type="text" class="chat-input" id="chatInput" data-i18n-placeholder="type_message" placeholder="Type your message...">
+        <button class="send-btn" id="sendBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+        </button>
+    </div>
+  </div>
+
+  <script>
+    // Gemini API configuration
+    const GEMINI_API_KEY = "AIzaSyB5nF98osK9lyJptUcFXTOKttxpy9MfYMA";
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    // DOM elements
+    const chatIcon = document.getElementById('chatIcon');
+    const chatContainer = document.getElementById('chatContainer');
+    const closeBtn = document.getElementById('closeBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+    
+    // Event listeners
+    chatIcon.addEventListener('click', toggleChat);
+    closeBtn.addEventListener('click', toggleChat);
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Functions
+    function toggleChat() {
+        if (chatContainer.style.display === 'flex') {
+            chatContainer.style.display = 'none';
+        } else {
+            chatContainer.style.display = 'flex';
+            chatInput.focus();
+        }
+    }
+    
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (message === '') return;
+        
+        // Add user message to chat
+        addMessage(message, 'user');
+        
+        // Clear input
+        chatInput.value = '';
+        
+        // Show typing indicator
+        typingIndicator.style.display = 'block';
+        
+        // Send message to Gemini API
+        callGeminiAPI(message);
+    }
+    
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        
+        if (sender === 'user') {
+            messageDiv.classList.add('user-message');
+        } else {
+            messageDiv.classList.add('bot-message');
+        }
+        
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function callGeminiAPI(message) {
+        // Create a more focused prompt for the Market-Connect chatbot context
+        const contextPrompt = `You are a helpful assistant for farmers and artisans using the Market-Connect platform. 
+        Help with questions about market prices, finding buyers, and agricultural/handicraft sales. 
+        Current prices: Wheat: ₹2000/Qtl, Rice: ₹2800/Qtl, Vegetables: ₹1500/Qtl, Handicrafts: ₹500/item.
+        
+        User query: ${message}`;
+        
+        const requestBody = {
+            contents: [{
+                parts: [{ text: contextPrompt }]
+            }]
+        };
+        
+        try {
+            const response = await fetch(GEMINI_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const data = await response.json();
+            
+            // Hide typing indicator
+            typingIndicator.style.display = 'none';
+            
+            // Process the response
+            if (data.candidates && data.candidates[0].content && 
+                data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                addMessage(aiResponse, 'bot');
+            } else {
+                // Handle error or unexpected response format
+                addMessage("I'm sorry, I couldn't process your request. Please try again.", 'bot');
+                console.error('Unexpected API response structure:', data);
+            }
+        } catch (error) {
+            // Hide typing indicator
+            typingIndicator.style.display = 'none';
+            
+            // Display error message
+            addMessage("I'm sorry, there was an error processing your request. Please try again later.", 'bot');
+            console.error('Error calling Gemini API:', error);
+        }
+    }
+    
+    // Initialize chatbot to support i18n if available
+    document.addEventListener('DOMContentLoaded', function() {
+        // If the translations system is available, update the placeholder texts
+        if (typeof updatePageTranslations === 'function') {
+            updatePageTranslations();
+        }
+    });
+   
+  </script>
+   <script>
+    (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="p3YwTM0BczkPnJz6L27h3";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+    </script>
+</body>
+</html>

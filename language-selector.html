@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Language Selector - Market-Connect Chatbot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .language-popup {
+      max-width: 400px;
+      margin: 5rem auto;
+      padding: 2rem;
+      background-color: #e1f5fe;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .language-popup select {
+      padding: 0.5rem;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+      width: 80%;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .language-popup p {
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="home.html">Home</a> |
+    <a href="market-prices.html">Market Prices</a> |
+    <a href="find-buyers.html">Find Buyers</a> |
+    <a href="how-it-works.html">How It Works</a> |
+    <a href="language-selector.html">Language Selector</a> |
+    <a href="download-app.html">Download App</a> |
+    <a href="about-us.html">About Us</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </nav>
+
+  <div class="language-popup">
+    <h2>Select Your Preferred Language</h2>
+    <select id="language-select">
+      <option value="hi">हिन्दी</option>
+      <option value="ta">தமிழ்</option>
+      <option value="te">తెలుగు</option>
+      <option value="bn">বাংলা</option>
+      <option value="en" selected>English</option>
+    </select>
+    <p id="selected-language-text">Your experience will now continue in English.</p>
+    <button id="select-language-btn" class="btn btn-primary">Select Language</button>
+  </div>
+
+    <script>
+    const languageSelect = document.getElementById('language-select');
+    const selectedLanguageText = document.getElementById('selected-language-text');
+
+    const languageNames = {
+      hi: 'हिन्दी',
+      ta: 'தமிழ்',
+      te: 'తెలుగు',
+      bn: 'বাংলা',
+      en: 'English'
+    };
+
+    // On page load, set the select value from localStorage if available
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+      languageSelect.value = savedLang;
+      selectedLanguageText.textContent = `Your experience will now continue in ${languageNames[savedLang]}.`;
+    });
+
+    languageSelect.addEventListener('change', () => {
+      const selected = languageSelect.value;
+      selectedLanguageText.textContent = `Your experience will now continue in ${languageNames[selected]}.`;
+    });
+
+    document.getElementById('select-language-btn').addEventListener('click', () => {
+      const selectedLang = languageSelect.value;
+      localStorage.setItem('selectedLanguage', selectedLang);
+      alert(`Language set to ${languageNames[selectedLang]}. The app will now reload.`);
+      // Reload or redirect to home page to apply language
+      window.location.href = 'home.html';
+    });
+  </script>
+</body>
+</html>

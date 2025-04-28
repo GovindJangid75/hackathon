@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Market Prices - Market-Connect Chatbot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    async function fetchMandiPrices() {
+      try {
+        const response = await fetch('/mandi-prices');
+        const prices = await response.json();
+        const pricesList = document.getElementById('prices-list');
+        pricesList.innerHTML = '';
+        for (const [product, price] of Object.entries(prices)) {
+          const row = document.createElement('tr');
+          const productCell = document.createElement('td');
+          productCell.textContent = product;
+          const priceCell = document.createElement('td');
+          priceCell.textContent = '₹' + price;
+          row.appendChild(productCell);
+          row.appendChild(priceCell);
+          pricesList.appendChild(row);
+        }
+      } catch (error) {
+        console.error('Error fetching mandi prices:', error);
+      }
+    }
+
+    window.onload = () => {
+      fetchMandiPrices();
+    };
+  </script>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="home.html">Home</a> |
+    <a href="market-prices.html">Market Prices</a> |
+    <a href="find-buyers.html">Find Buyers</a> |
+    <a href="how-it-works.html">How It Works</a> |
+    <a href="language-selector.html">Language Selector</a> |
+    <a href="download-app.html">Download App</a> |
+    <a href="about-us.html">About Us</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Current Market Prices</h1>
+    <p>Updated dynamically from the mandi price database.</p>
+  </header>
+
+  <section class="prices-list">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="prices-list">
+        <!-- Dynamic content will be inserted here -->
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <nav>
+      <a href="about-us.html">About Us</a> | 
+      <a href="contact.html">Contact</a> | 
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </footer>
+</body>
+</html>
